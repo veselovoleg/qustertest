@@ -2,19 +2,22 @@
   <div id="app">
     <h2>The Questioner</h2>
     <ul>
-      <table v-for="(item, index) in data" v-bind:key="index">
+      <table>
         <tr>
+          <td colspan="3" id="nothing"></td>
+          <td colspan="1" id="delete" title="Delete all answers" @click="deleteAnswers">Del</td>
+        </tr>
+        <tr v-for="(item, index) in data" v-bind:key="index">
           <td>{{item.question}}</td>
-          <td class="answer" @click="choosedAnswer(index, 0)">{{answers[0]}}</td>
-          <td class="answer" @click="choosedAnswer(index, 1)">{{answers[1]}}</td>
-          <td v-if="choosed[index] == ''" class="nochecked">
-            <!-- <span v-if="choosed[index] == 'Yes' && 'No'">Yes</span>
-            <span v-if="choosed[index] == 'No'">No</span>
-            <span v-if="choosed[index] == ''"></span> -->
-          </td>
-          <td v-if="choosed[index] == 'Yes' || choosed[index] ==  'No'" class="checked">
-
-          </td>
+          <td class="answer" @click="choosedAnswer(index, 0)" title="Choose 'Yes'">{{answers[0]}}</td>
+          <td class="answer" @click="choosedAnswer(index, 1)" title="Choose 'No'">{{answers[1]}}</td>
+          <td v-if="choosed[index] == ''" class="nochecked"></td>
+          <td v-if="choosed[index] == 'Yes'" class="checkedyes" title="You choosed 'Yes' in this row">Yes</td>
+          <td v-if="choosed[index] ==  'No'" class="checkedno" title="You choosed 'No' in this row">No</td>
+        </tr>
+        <tr>
+          <td colspan="4" id="sender-passive" v-if="!checkAnswers"></td>
+          <td colspan="4" id="sender-active" v-if="checkAnswers" title="Send answers!" @click="sendAnswers">Send Answers?</td>
         </tr>
       </table>
     </ul>
@@ -36,8 +39,15 @@ export default {
   },
   methods: {
     choosedAnswer(index, val) {
-      //let num = this.data[index].id;
       this.$set(this.choosed, index, this.answers[val]);
+    },
+    deleteAnswers(){
+      for (let i = 0; i < this.data.length; i++){
+        this.$set(this.choosed, i, '');
+      }
+    },
+    sendAnswers(){
+      
     },
     getData() {
       axios
@@ -50,22 +60,12 @@ export default {
         });
     }
   },
-  /* computed: {
-    checkAnswers() {
-      var mass = [false, false, false];
-
-      if(this.choosed[0] == false){
-        mass[0] = false 
-      } else {
-        mass[0] = true 
-      }
-      this.choosed[0] == false ? mass[0] = false : mass[0] = true ;
-      this.choosed[1] == false ? mass[1] = false : mass[1] = true ;
-      this.choosed[2] == false ? mass[2] = false : mass[2] = true ;
-
-      return mass;
+  computed: {
+    checkAnswers(){
+      var ans = this.choosed;
+      return ans[0] == '' || ans[1] == '' || ans[2] == '' ?  false : true;
     }
-  } */
+  }
 };
 </script>
 
@@ -112,15 +112,51 @@ tr td {
   background-color: #bea42f;
 }
 
-.checked, .nochecked {
-  width: 5%
+.nochecked,
+.checkedyes,
+.checkedno {
+  width: 8%;
 }
 
-.checked{
-  background-color: green
+.checkedyes {
+  background-color: green;
 }
 
-.nochecked{
-  background-color: rgb(5, 5, 5)
+.checkedno {
+  background-color: #ca1818;
 }
+
+.nochecked {
+  background-color: rgb(5, 5, 5);
+}
+
+#sender-active, #sender-passive {
+  height: 40px;
+}
+
+#sender-active {
+  background-color: rgb(0, 26, 255);
+  cursor: pointer;
+}
+
+#sender-active:hover {
+  background-color: rgb(33, 44, 138);
+}
+#sender-passive {
+  background-color: rgb(92, 92, 94);
+}
+
+#nothing{
+  background-color: #42b983;
+}
+
+#delete{
+  background-color: #ca1818;
+}
+
+#delete:hover{
+  background-color: #b43232;
+  cursor: pointer;
+}
+
 </style>
