@@ -112,7 +112,7 @@ tr td {
   background-color: #bea42f;
 }
 
-.checked nochecked {
+.checked, .nochecked {
   width: 5%
 }
 
